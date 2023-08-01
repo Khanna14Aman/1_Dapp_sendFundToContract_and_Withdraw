@@ -118,26 +118,29 @@ function App() {
   }, [web3Api, reload]);
 
   const transferFund = async () => {
-    const { web3, contract } = web3Api;
-    await contract.methods.transfer().send({
-      from: account,
-      value: web3.utils.toWei("2", "ether"),
-    });
-    reloadEffect();
+    try {
+      const { web3, contract } = web3Api;
+      await contract.methods.transfer().send({
+        from: account,
+        value: web3.utils.toWei("2", "ether"),
+      });
+      reloadEffect();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const withdrawFund = async () => {
-    const value = balance;
-    if (parseInt(value) < 2) {
-      window.alert("Contract does'nt have 2 Ether to give you back");
-      return;
+    try {
+      const { contract, web3 } = web3Api;
+      const withdrawAmout = web3.utils.toWei("2", "ether");
+      await contract.methods.withdraw(withdrawAmout).send({
+        from: account,
+      });
+      reloadEffect();
+    } catch (error) {
+      console.log(error);
     }
-    const { contract, web3 } = web3Api;
-    const withdrawAmout = web3.utils.toWei("2", "ether");
-    await contract.methods.withdraw(withdrawAmout).send({
-      from: account,
-    });
-    reloadEffect();
   };
 
   // console.log(typeof balance);
